@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Missão Espacial | Arcade 2D — Ranking e recordes</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body { margin:0; min-height:100vh; background:radial-gradient(circle at 50% 12%, #191e51, #090b20 63%, #030611);
+           color:#edf3ff; font:15px/1.45 system-ui,-apple-system,'Segoe UI',Arial,sans-serif; text-align:center; }
+    main { padding: 22px 14px 35px; margin:auto; max-width:990px; }
+    .tag { letter-spacing:.24em; font-weight:800; font-size:11px; color:#8da6ff; margin:0 0 5px; }
+    h1 { margin:0 0 5px; font-size:clamp(22px,5vw,34px); letter-spacing:.03em; }
+    .intro { color:#b9c8e8; margin:0 0 18px; font-size:13px; }
+    .layout { display:grid; grid-template-columns:minmax(0, 640px) minmax(225px,1fr); align-items:start; gap:22px; }
+    .game-col { min-width:0; }
+    .game { position:relative; width:100%; border:2px solid #667fce; border-radius:11px; overflow:hidden;
+            box-shadow:0 0 0 4px rgba(89,117,232,.1),0 18px 60px rgba(0,0,0,.45); background:#0a0620; }
+    canvas { display:block; width:100%; height:auto; image-rendering:auto; }
+    .fim-overlay { position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+                   padding:14px; background:rgba(2,6,22,.76); z-index:2; }
+    [hidden] { display:none !important; }
+    .fim-card { width:min(100%,390px); padding:22px 20px; border-radius:16px; border:1px solid #93a7ff;
+                background:linear-gradient(145deg,#171f50,#0b1534); box-shadow:0 14px 44px rgba(0,0,0,.55); }
+    .fim-card h2 { color:#ff9fb2; font-size:clamp(22px,5vw,32px); margin:0 0 5px; letter-spacing:.08em; }
+    .fim-card p { margin:8px 0 13px; }
+    .pontos-finais { font-size:23px; font-weight:800; color:#ffe78a; }
+    .fim-card label { display:block; font-size:13px; color:#d6e0ff; margin:0 0 6px; text-align:left; }
+    .fim-card input { width:100%; border:1px solid #a5bbff; border-radius:9px; color:#fff;
+                      background:#090d27; font:600 17px system-ui,sans-serif; padding:11px 12px; margin-bottom:11px; }
+    .fim-card input:focus { outline:2px solid #e1bd68; outline-offset:2px; }
+    .fim-card button { width:100%; }
+    .fim-card .erro { color:#ffb1b9; font-size:12px; min-height:17px; margin:1px 0 8px; }
+    .fim-card .resultado-salvo { color:#c8ffdd; }
+    .toolbar { display:flex; justify-content:center; gap:10px; margin-top:15px; flex-wrap:wrap; }
+    button { font:700 14px system-ui,Arial,sans-serif; border:1px solid #7d96e5; background:#18265c; color:#fff;
+             padding:11px 17px; border-radius:9px; cursor:pointer; touch-action:manipulation; user-select:none; }
+    button:hover { background:#293b83; }
+    button:disabled { opacity:.45; cursor:not-allowed; }
+    button:focus-visible { outline:2px solid #fff; outline-offset:3px; }
+    .primary { background:#4367d1; border-color:#789cff; }
+    #estado { font-size:12px; color:#a6b8df; margin:10px 0 0; min-height:1.3em; }
+    .ranking { text-align:left; border:1px solid #52699e; background:rgba(10,16,43,.92); padding:19px 16px 17px;
+               border-radius:12px; box-shadow:0 16px 35px rgba(0,0,0,.22); }
+    .ranking h2 { font-size:21px; margin:0 0 12px; }
+    .recorde { padding:12px; border-radius:10px; background:#202953; border:1px solid #485fa6; margin-bottom:12px; }
+    .recorde-label { color:#ffd56f; text-transform:uppercase; letter-spacing:.1em; font-size:11px; font-weight:800; }
+    #melhor-placar { margin:5px 0 0; font-size:14px; overflow-wrap:anywhere; }
+    .ranking ol { list-style:none; padding:0; margin:0; }
+    .ranking li { display:grid; grid-template-columns:26px minmax(0,1fr) auto; gap:6px; align-items:center;
+                  border-bottom:1px solid rgba(139,164,220,.19); padding:9px 0; font-size:13px; }
+    .ranking li:last-child { border-bottom:none; }
+    .ranking .pos { color:#8da6ff; font-weight:700; }
+    .ranking .nome { overflow-wrap:anywhere; }
+    .ranking .score { font-variant-numeric:tabular-nums; font-weight:800; color:#ffe58a; }
+    .ranking li.vazio { display:block; font-size:13px; color:#b2c5ed; line-height:1.6; }
+    .ranking .nota { font-size:12px; color:#9fb4df; line-height:1.5; margin:14px 0 0; }
+    .controles { max-width:520px; display:grid; grid-template-columns: 1fr 126px; gap:15px; margin:12px auto 0; }
+    .direcoes { display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(2,46px); gap:5px; max-width:230px; margin:0 auto; width:100%; }
+    .direcoes button { padding:0; min-width:0; font-size:20px; touch-action:none; }
+    .direcoes [data-tecla="38"] { grid-column:2; grid-row:1; }
+    .direcoes [data-tecla="37"] { grid-column:1; grid-row:2; }
+    .direcoes [data-tecla="40"] { grid-column:2; grid-row:2; }
+    .direcoes [data-tecla="39"] { grid-column:3; grid-row:2; }
+    .atirar { font-size:16px; width:100%; background:#744080; border-color:#d493e3; touch-action:none; }
+    .help { font-size:12px; color:#b9c8e8; margin:14px auto 0; max-width:640px; }
+    .help strong { color:#edf3ff; }
+    @media (max-width:860px) { main {max-width:680px;} .layout { grid-template-columns:minmax(0,1fr); }
+       .ranking {margin-top:8px;} }
+    @media (min-width:861px) { .controles { display:none; } }
+    @media (max-width:430px) { main {padding:14px 8px 25px;} .intro {font-size:12px;} .fim-card {padding:13px 12px;}
+       .fim-card h2 {font-size:22px;} .fim-card p {margin:5px 0 9px;} .fim-card input {padding:9px;} }
+  </style>
+  <script src="animacao.js" defer></script>
+  <script src="teclado.js" defer></script>
+  <script src="colisor.js" defer></script>
+  <script src="fundo.js" defer></script>
+  <script src="nave.js" defer></script>
+  <script src="tiro.js" defer></script>
+  <script src="ovni.js" defer></script>
+  <script src="powerup.js" defer></script>
+  <script src="particulas.js" defer></script>
+  <script src="ranking.js" defer></script>
+  <script src="jogo.js" defer></script>
+  <script src="principal.js" defer></script>
+</head>
+<body>
+  <main>
+    <p class="tag">PROJETO GAMEDEVWEB · AULAS 9 E 10</p>
+    <p class="intro">Destrua OVNIs, colete poderes e dispute o recorde com seus amigos.</p>
+    <div class="layout">
+      <section class="game-col" aria-label="Área do jogo">
+        <div class="game">
+          <canvas id="canvas_nave" width="640" height="780" aria-label="Jogo de nave espacial com inimigos e poderes"></canvas>
+          <div id="fim-overlay" class="fim-overlay" hidden>
+            <div class="fim-card" role="group" aria-labelledby="fim-titulo">
+              <h2 id="fim-titulo">GAME OVER</h2>
+              <p>Você conquistou</p>
+              <p class="pontos-finais"><span id="pontos-finais">0</span> pontos!</p>
+              <form id="form-ranking">
+                <label for="nome-jogador">Digite seu nome para entrar no ranking:</label>
+                <input id="nome-jogador" type="text" maxlength="18" autocomplete="nickname" placeholder="Seu nome" required>
+                <p id="erro-ranking" class="erro" role="alert"></p>
+                <button class="primary" type="submit">Salvar pontuação</button>
+              </form>
+              <div id="resultado-ranking" hidden>
+                <p id="mensagem-ranking" class="resultado-salvo" role="status"></p>
+                <button id="jogar-de-novo" class="primary" type="button">▶ Jogar novamente</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="toolbar">
+          <button id="reiniciar" class="primary" type="button">↻ Reiniciar jogo</button>
+          <button id="pausar" type="button">Ⅱ Pausar (P)</button>
+        </div>
+        <p id="estado" role="status">Carregando imagens...</p>
+        <div class="controles" aria-label="Controles para celular">
+          <div class="direcoes">
+            <button data-tecla="38" aria-label="Mover para cima">▲</button>
+            <button data-tecla="37" aria-label="Mover para esquerda">◀</button>
+            <button data-tecla="40" aria-label="Mover para baixo">▼</button>
+            <button data-tecla="39" aria-label="Mover para direita">▶</button>
+          </div>
+          <button data-tecla="32" class="atirar" aria-label="Atirar">●<br>ATIRAR</button>
+        </div>
+        <p class="help"><strong>Teclado:</strong> setas para mover · ESPAÇO para atirar · P para pausar.<br>
+          <strong>Power-Ups:</strong> ⭐ escudo 15s · 🔧 tiro duplo 15s · cada OVNI destruído vale 1 ponto.</p>
+      </section>
+      <aside class="ranking" aria-labelledby="ranking-titulo">
+        <h2 id="ranking-titulo">🏆 Ranking</h2>
+        <div class="recorde">
+          <div class="recorde-label">Recorde atual</div>
+          <p id="melhor-placar">Nenhum recorde ainda.</p>
+        </div>
+        <ol id="lista-ranking" aria-label="Dez melhores pontuações"></ol>
+        <p class="nota" id="nota-ranking">Os 10 melhores resultados ficam salvos neste navegador. Em outro aparelho, o ranking será diferente.</p>
+      </aside>
+    </div>
+  </main>
+</body>
+</html>
