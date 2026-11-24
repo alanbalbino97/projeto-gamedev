@@ -11,9 +11,9 @@ function Nave(context, teclado, imagem, jogo) {
    this.y = context.canvas.height - this.altura - 35;
    this.velocidade = 285;
    this.vidas = 5;
-   this.protegidaAte = 0; // intervalo curto após sofrer dano
-   this.escudoAte = 0; // estrela: 15 segundos
-   this.tiroDuploAte = 0; // chave: 15 segundos
+   this.protegidaAte = 0; 
+   this.escudoAte = 0; 
+   this.tiroDuploAte = 0; 
    this.intervaloTiro = 0;
    this.inclinacao = 0;
 }
@@ -36,7 +36,7 @@ Nave.prototype = {
    desenhar: function() {
       var ctx = this.context;
       var t = this.jogo.tempo;
-      // A nave pisca após receber dano; a proteção da estrela é separada.
+     
       if (this.protegidaAte > t && Math.floor(t * 12) % 2 === 0) return;
       ctx.save();
       ctx.translate(this.x + this.largura/2, this.y + this.altura/2);
@@ -62,7 +62,7 @@ Nave.prototype = {
       }
    },
    retangulosColisao: function() {
-      // Aproximação de três partes do corpo, como no código original.
+      
       var sx = this.largura / 36, sy = this.altura / 48;
       return [
          {x: this.x+2*sx, y: this.y+19*sy, largura: 9*sx, altura: 13*sy},
@@ -77,7 +77,6 @@ Nave.prototype = {
          this.jogo.removerSprite(outro);
       }
       if (outro instanceof Ovni) {
-         // Remover o inimigo para não descontar vidas várias vezes.
          this.jogo.removerSprite(outro);
          this.jogo.criarExplosao(outro.x + outro.largura/2, outro.y + outro.altura/2, ['#fc8e5b', '#ffeb9d', '#c957e7']);
          if (this.escudoAte > this.jogo.tempo || this.protegidaAte > this.jogo.tempo) return;
