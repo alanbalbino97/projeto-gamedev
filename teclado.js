@@ -25,6 +25,6 @@ Teclado.prototype = {
    pressionada: function(tecla) { return !!this.pressionadas[tecla]; },
    disparou: function(tecla, callback) { this.funcoesDisparo[tecla] = callback; },
    limpar: function() { this.pressionadas = []; },
-   // Controles de toque usam o mesmo conjunto de teclas do teclado físico.
+   
    definir: function(tecla, pressionada) { this.pressionadas[tecla] = pressionada; }
 };
