@@ -1,4 +1,4 @@
-// Segue o comportamento do tiro.js da Aula 9 (movimento, colisão, descarte).
+
 function Tiro(context, nave, centroX) {
    this.context = context;
    this.jogo = nave.jogo;
