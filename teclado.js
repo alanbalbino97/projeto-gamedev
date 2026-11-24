@@ -1,4 +1,4 @@
-// Conserva o estilo da classe Teclado das Aulas 8 e 9.
+
 var SETA_ESQUERDA = 37;
 var SETA_ACIMA = 38;
 var SETA_DIREITA = 39;
