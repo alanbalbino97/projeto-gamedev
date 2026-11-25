@@ -20,7 +20,7 @@
       var lista = document.getElementById('lista-ranking');
       var recorde = document.getElementById('melhor-placar');
       var melhores = ranking.listar();
-      lista.textContent = ''; // evita conteúdo HTML não confiável vindo do nome.
+      lista.textContent = '';
       if (!melhores.length) {
          var vazio = document.createElement('li');
          vazio.className = 'vazio';
@@ -98,7 +98,7 @@
       try {
          var resultado = ranking.registrar(nomeJogador.value, jogoAtual.pontos);
          atualizarRanking();
-         formulario.hidden = true; // impede que a mesma partida seja registrada duas vezes.
+         formulario.hidden = true; 
          resultadoRanking.hidden = false;
          if (!resultado.entrou) {
             mensagemRanking.textContent = 'Resultado registrado, mas não ficou entre os 10 melhores.';
@@ -125,12 +125,12 @@
       estado.textContent = jogoAtual.pausado ? 'Jogo pausado.' : 'Jogo em andamento.';
    }
    botaoPausa.addEventListener('click', pausar);
-   teclado.disparou(80, pausar); // P
+   teclado.disparou(80, pausar); 
    document.addEventListener('visibilitychange', function() {
       if (document.hidden && jogoAtual && !jogoAtual.pausado && !jogoAtual.terminou) pausar();
    });
 
-   // Os botões de celular marcam as mesmas teclas que o teclado do professor.
+   
    document.querySelectorAll('[data-tecla]').forEach(function(botao) {
       var codigo = Number(botao.getAttribute('data-tecla'));
       botao.addEventListener('pointerdown', function(evento) {
