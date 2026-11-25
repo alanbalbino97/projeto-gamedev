@@ -52,7 +52,6 @@ Animacao.prototype = {
 
       if (!this.jogo.pausado && !this.jogo.terminou) {
          this.jogo.atualizar(dt);
-         // Usamos uma cópia: um tiro ou inimigo pode nascer durante a atualização.
          var atualizados = this.sprites.slice();
          for (var i = 0; i < atualizados.length; i++) {
             if (!atualizados[i].excluido) atualizados[i].atualizar(dt);
