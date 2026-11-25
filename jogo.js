@@ -21,7 +21,7 @@ function Jogo(context, teclado, imagens, aoTerminar, ranking) {
    this.colisor = new Colisor();
    this.animacao.novoProcessamento(this.colisor);
    this.fundo = new Fundo(context, imagens.fundo);
-   this.animacao.novoSprite(this.fundo); // Fundo vem antes da nave.
+   this.animacao.novoSprite(this.fundo); 
    this.nave = new Nave(context, teclado, imagens.nave, this);
    this.adicionarSprite(this.nave, true);
 }
@@ -46,7 +46,7 @@ Jogo.prototype = {
    },
    ativarPoder: function(tipoPoder) {
       if (tipoPoder === 'estrela') {
-         this.nave.escudoAte = this.tempo + 15; // 15 segundos a partir da coleta.
+         this.nave.escudoAte = this.tempo + 15; 
          this.aviso('ESCUDO ATIVADO • 15s', '#8fddff');
       } else if (tipoPoder === 'chave') {
          this.nave.tiroDuploAte = this.tempo + 15;
@@ -67,11 +67,9 @@ Jogo.prototype = {
    },
    atualizar: function(dt) {
       this.tempo += dt;
-      // A cada 18 segundos, dificuldade sobe suavemente.
       this.nivel = Math.min(12, 1 + Math.floor(this.tempo / 18));
       if (this.tempo >= this.proximaOnda) {
          this.criarOvni();
-         // Nos níveis mais altos, algumas ondas têm mais de um inimigo.
          if (this.nivel >= 3 && Math.random() < Math.min(0.48, 0.12 + (this.nivel-3)*0.065))
             this.criarOvni();
          var intervalo = Math.max(0.42, 1.30 - (this.nivel-1)*0.098);
@@ -83,7 +81,7 @@ Jogo.prototype = {
       }
    },
    terminar: function() {
-      if (this.terminou) return; // evita abrir o formulário duas vezes.
+      if (this.terminou) return; 
       this.terminou = true;
       if (this.aoTerminar) this.aoTerminar(this.pontos);
    },
