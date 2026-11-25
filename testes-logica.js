@@ -1,4 +1,4 @@
-// Testes offline das regras: rode `node testes-logica.js`.
+
 const fs = require('fs'), vm = require('vm'), assert = require('assert'), path = require('path');
 const raiz = __dirname;
 for (const nome of ['animacao','colisor','fundo','nave','tiro','ovni','powerup','particulas','ranking','jogo'])
@@ -35,7 +35,7 @@ function novo(){return new Jogo(ctx,teclado,imagens)}
  assert.strictEqual(n.vidas,4);
  let ovni3=new Ovni(ctx,imagens.ovni,jogo,1);ovni3.x=n.x;ovni3.y=n.y+20;
  jogo.adicionarSprite(ovni3,true);jogo.colisor.processar();jogo.animacao.processarExclusoes();
- assert.strictEqual(n.vidas,4); // 1,25 s após uma colisão.
+ assert.strictEqual(n.vidas,4); 
  jogo.tempo=18;
  let ovni4=new Ovni(ctx,imagens.ovni,jogo,1);ovni4.x=n.x;ovni4.y=n.y+20;
  jogo.adicionarSprite(ovni4,true);jogo.colisor.processar();jogo.animacao.processarExclusoes();
